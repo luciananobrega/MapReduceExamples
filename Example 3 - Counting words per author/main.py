@@ -25,12 +25,19 @@ def mapfn(k, v):
         for word in title.split():
             if (word not in allStopWords):
                 for author in authors:
-                    _word = (word, 1)
+                    _word = [word, 1]
                     yield author, _word
 
 def reducefn(k, v):
     print('reduce ' + k)
-    return v
+    
+    out = []
+    for x in v:
+        if v.count(x) > 0:
+            out.append([x[0], v.count(x)])
+            v = list(filter(lambda y: y != x, v))
+    
+    return out
 
 s = mincemeat.Server()
 
