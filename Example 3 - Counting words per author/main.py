@@ -5,7 +5,7 @@ import csv
 text_files = glob.glob("data\\*")
 
 def file_contents(file_name):
-    f = open(file_name)
+    f = open(file_name, encoding="utf-8")
     try:
         return f.read()
     finally:
@@ -20,14 +20,17 @@ def mapfn(k, v):
 
     for line in v.splitlines():
         authors = line.split(':::')[1].split('::')
-        title = line.split(':::')[2].replace(',', '').replace('.', '')
+        title = line.split(':::')[2].replace(',', '').replace('.', '').replace(' - ', '').lower()
 
         for word in title.split():
             if (word not in allStopWords):
-                yield word, 1
+                for author in authors:
+                    _word = (word, 1)
+                    yield author, _word
 
 def reducefn(k, v):
-    print('reduce' + k)
+    print('reduce ' + k)
+    return v
 
 s = mincemeat.Server()
 
